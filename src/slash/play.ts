@@ -1,5 +1,5 @@
 import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
-import { PlayerSearchResult, QueryType } from "discord-player";
+import { PlayerSearchResult, QueryType, QueueRepeatMode } from "discord-player";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { ClientInterface } from "../utils/interfaces/Client.interface";
 
@@ -39,6 +39,11 @@ export default {
             .setDescription("Termos da pesquisa.")
             .setRequired(true)
         )
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName("auto")
+        .setDescription("Deixa que o pai toca! 😎 (experimental)")
     ),
 
   run: async (client: ClientInterface, interaction: CommandInteraction) => {
@@ -47,7 +52,7 @@ export default {
     const rYoutube: RegExp = new RegExp("youtube.com", "gm");
     const rSoundcloud: RegExp = new RegExp("soundcloud.com", "gm");
     const rFacebook: RegExp = new RegExp("facebook.com", "gm");
-    const rTwitch: RegExp = new RegExp("twitch.com", "gm");
+    // const rTwitch: RegExp = new RegExp("twitch.com", "gm");
     if (interaction.member instanceof GuildMember) {
       if (!interaction.member.voice.channel)
         return interaction.editReply("Pô cara, tu tá fora do canal de audio.");
@@ -150,6 +155,19 @@ export default {
               .setFooter({ text: `Duração: ${song.duration}` });
           }
         }
+
+        if (interaction.options.getSubcommand() === "auto") {
+          if (queue.repeatMode !== QueueRepeatMode.AUTOPLAY) {
+            queue.setRepeatMode(QueueRepeatMode.AUTOPLAY);
+            return await interaction.editReply(
+              `Deixa que o pai toca! 😎 - **Automático ativado**!`
+            );
+          } else {
+            queue.setRepeatMode(QueueRepeatMode.OFF);
+            return await interaction.editReply(`**Automático desativado**!`);
+          }
+        }
+
         if (!queue.playing) await queue.play();
         await interaction.editReply({
           embeds: [embed],
