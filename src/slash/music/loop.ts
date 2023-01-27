@@ -1,7 +1,11 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { QueueRepeatMode } from "discord-player";
-import { CommandInteraction, GuildMember } from "discord.js";
-import { ClientInterface } from "../utils/interfaces/Client.interface";
+import {
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  GuildMember,
+} from "discord.js";
+import { ClientInterface } from "@interfaces/Client.interface";
 
 export default {
   data: new SlashCommandBuilder()
@@ -13,7 +17,10 @@ export default {
     .addSubcommand((subcommand) =>
       subcommand.setName("playlist").setDescription("Repita a playlist")
     ),
-  run: async (client: ClientInterface, interaction: CommandInteraction) => {
+  run: async (
+    client: ClientInterface,
+    interaction: ChatInputCommandInteraction
+  ) => {
     if (interaction.member instanceof GuildMember) {
       if (!interaction.member.voice.channel)
         return await interaction.editReply(

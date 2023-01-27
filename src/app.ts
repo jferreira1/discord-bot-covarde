@@ -1,15 +1,15 @@
 import "dotenv/config";
 import {
+  ChatInputCommandInteraction,
   Client,
   Collection,
-  CommandInteraction,
   Interaction,
 } from "discord.js";
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord-api-types/v9";
 import fs from "fs";
 import { Player } from "discord-player";
-import { ClientInterface } from "./utils/interfaces/Client.interface";
+import { ClientInterface } from "@interfaces/Client.interface";
 
 const TOKEN = process.env.TOKEN ?? "";
 const APP_ID = process.env.APP_ID ?? "";
@@ -17,7 +17,7 @@ const GUILD_ID = process.env.GUILD_ID ?? "";
 const LOAD_SLASH = process.argv[2] === "load";
 
 const client: ClientInterface = new Client({
-  intents: ["GUILDS", "GUILD_VOICE_STATES"],
+  intents: ["Guilds", "GuildVoiceStates"],
 });
 
 client.slashCommands = new Collection();
@@ -39,7 +39,7 @@ let commands: Commands[] = [];
 
 const slashFiles = fs
   .readdirSync(`${__dirname}/slash`)
-  .filter((file) => file.endsWith(".ts"));
+  .filter((file) => file.endsWith(".js"));
 for (const file of slashFiles) {
   let slashCommand = require(`${__dirname}/slash/${file}`);
   client.slashCommands?.set(slashCommand.default.data.name, slashCommand);
@@ -69,12 +69,13 @@ if (LOAD_SLASH) {
   });
   client.on("interactionCreate", (interaction: Interaction) => {
     async function handleCommand() {
-      if (interaction instanceof CommandInteraction) {
+      if (interaction instanceof ChatInputCommandInteraction) {
         const slashCommand: any = client.slashCommands?.get(
           interaction.commandName
         );
         if (!slashCommand) interaction.reply("Comando inválido ❌");
         await interaction.deferReply();
+
         await slashCommand.default.run(client, interaction);
       }
     }

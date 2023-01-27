@@ -1,6 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { ClientInterface } from "../utils/interfaces/Client.interface";
+import {
+  ChatInputCommandInteraction,
+  CommandInteraction,
+  EmbedBuilder,
+} from "discord.js";
+import { ClientInterface } from "@interfaces/Client.interface";
 
 export default {
   data: new SlashCommandBuilder()
@@ -9,7 +13,10 @@ export default {
     .addNumberOption((option) =>
       option.setName("page").setDescription("Página da fila.").setMinValue(1)
     ),
-  run: async (client: ClientInterface, interaction: CommandInteraction) => {
+  run: async (
+    client: ClientInterface,
+    interaction: ChatInputCommandInteraction
+  ) => {
     if (!client.player || !interaction.isCommand() || !interaction.guildId)
       return await interaction.editReply("Ih mané, alguma coisa deu errado.");
     const queue = client.player.getQueue(interaction.guildId);
@@ -33,7 +40,7 @@ export default {
     const currentSong = queue.current;
     await interaction.editReply({
       embeds: [
-        new MessageEmbed()
+        new EmbedBuilder()
           .setDescription(
             `**Tocando agora:**\n` +
               (currentSong

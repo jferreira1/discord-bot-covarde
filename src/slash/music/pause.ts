@@ -1,12 +1,15 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { CommandInteraction, GuildMember } from "discord.js";
-import { ClientInterface } from "../utils/interfaces/Client.interface";
+import { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { ClientInterface } from "@interfaces/Client.interface";
 
 export default {
   data: new SlashCommandBuilder()
     .setName("pause")
     .setDescription("Suspende a música. ⏸"),
-  run: async (client: ClientInterface, interaction: CommandInteraction) => {
+  run: async (
+    client: ClientInterface,
+    interaction: ChatInputCommandInteraction
+  ) => {
     if (interaction.member instanceof GuildMember) {
       if (!interaction.member.voice.channel)
         return await interaction.editReply(

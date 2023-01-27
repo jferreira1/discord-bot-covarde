@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { PlayerProgressbarOptions } from "discord-player";
-import { CommandInteraction, MessageEmbed } from "discord.js";
-import { ClientInterface } from "../utils/interfaces/Client.interface";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
+import { ClientInterface } from "@interfaces/Client.interface";
 
 interface PlayerProgressBarOptions extends PlayerProgressbarOptions {
-  queue?: Boolean;
+  queue?: boolean;
 }
 
 export default {
@@ -24,7 +24,7 @@ export default {
     const song = queue.current;
     await interaction.editReply({
       embeds: [
-        new MessageEmbed()
+        new EmbedBuilder()
           .setThumbnail(song.thumbnail)
           .setDescription(
             `Tocando: \n**[${song.title}](${song.url})**\n` + bar

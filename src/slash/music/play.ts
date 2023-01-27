@@ -1,7 +1,11 @@
-import { CommandInteraction, GuildMember, MessageEmbed } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  GuildMember,
+  EmbedBuilder,
+} from "discord.js";
 import { PlayerSearchResult, QueryType, QueueRepeatMode } from "discord-player";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { ClientInterface } from "../utils/interfaces/Client.interface";
+import { ClientInterface } from "@interfaces/Client.interface";
 
 export default {
   data: new SlashCommandBuilder()
@@ -46,7 +50,10 @@ export default {
         .setDescription("Deixa que o pai toca! 😎 (experimental)")
     ),
 
-  run: async (client: ClientInterface, interaction: CommandInteraction) => {
+  run: async (
+    client: ClientInterface,
+    interaction: ChatInputCommandInteraction
+  ) => {
     const noResults = "Sem resultados 😳";
     const rSpotify: RegExp = new RegExp("spotify.com", "gm");
     const rYoutube: RegExp = new RegExp("youtube.com", "gm");
@@ -61,7 +68,7 @@ export default {
         const queue = client.player.createQueue(interaction.guild);
         if (!queue.connection)
           await queue.connect(interaction.member.voice.channel);
-        let embed = new MessageEmbed();
+        let embed = new EmbedBuilder();
 
         if (interaction.options.getSubcommand() === "song") {
           let url = interaction.options.getString("url");
